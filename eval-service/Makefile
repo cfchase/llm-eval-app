@@ -10,13 +10,7 @@ run:
 	podman run --platform linux/amd64 -ePORT=8080 -p8080:8080 ${IMAGE_TAG}
 
 run-local:
-	python app.py
-
-deploy:
-	oc process -p PREDICTOR_HOST=${PREDICTOR_HOST} -f templates/inference-service.yaml | oc apply -f -
-
-undeploy:
-	oc process -p PREDICTOR_HOST=${PREDICTOR_HOST} -f templates/inference-service.yaml | oc delete -f -
+	fastapi dev app.py
 
 test-local:
 	curl -k -H "Content-Type: application/json" http://localhost:8080/
