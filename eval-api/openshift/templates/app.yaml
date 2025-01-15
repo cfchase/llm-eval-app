@@ -1,0 +1,98 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: llm-eval-app
+  labels:
+    app: llm-eval-app
+    app.kubernetes.io/component: llm-eval-app
+    app.kubernetes.io/instance: llm-eval-app
+    app.kubernetes.io/name: llm-eval-app
+    app.kubernetes.io/part-of: llm-eval-app
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: 3.11-ubi8
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-eval-app
+  template:
+    metadata:
+      labels:
+        app: llm-eval-app
+        deployment: llm-eval-app
+    spec:
+      containers:
+        - name: llm-eval-app
+          image: 'quay.io/cfchase/eval-api:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: aws-connection-llm-eval-app
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: llm-eval-app
+  labels:
+    app: llm-eval-app
+    app.kubernetes.io/component: llm-eval-app
+    app.kubernetes.io/instance: llm-eval-app
+    app.kubernetes.io/name: llm-eval-app
+    app.kubernetes.io/part-of: llm-eval-app
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: 3.11-ubi8
+spec:
+  type: ClusterIP
+  selector:
+    app: llm-eval-app
+    deployment: llm-eval-app
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: llm-eval-app
+  labels:
+    app: llm-eval-app
+    app.kubernetes.io/component: llm-eval-app
+    app.kubernetes.io/instance: llm-eval-app
+    app.kubernetes.io/name: llm-eval-app
+    app.kubernetes.io/part-of: llm-eval-app
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: 3.11-ubi8
+spec:
+  to:
+    kind: Service
+    name: llm-eval-app
+    weight: 100
+  port:
+    targetPort: 8080-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

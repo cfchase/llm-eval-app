@@ -1,0 +1,86 @@
+name: finetuned-eval
+judge:
+  endpoint_url: https://api.server.com/v1
+  model_name: gpt-4o
+  model_type: openai
+  api_key: <api-key>
+  template: |
+    You are an evaluation system tasked with assessing the answer quality of a AI generated response in relation to the posed question and reference answer. Assess if the response is correct, accurate, and factual based on the reference answer.
+    For evaluating factuality of the answer look at the reference answer compare the model answer to it.
+    Evaluate the answer_quality as:
+    - Score 1: The response is completely incorrect, inaccurate, and/or not factual.
+    - Score 2: The response is mostly incorrect, inaccurate, and/or not factual.
+    - Score 3: The response is somewhat correct, accurate, and/or factual.
+    - Score 4: The response is mostly correct, accurate, and factual.
+    - Score 5: The response is completely correct, accurate, and factual.
+    Here is the question: \n ------- \n {question} \n -------
+    Here is model answer: \n ------- \n {answer} \n -------
+    Here is the reference answer(may be very short and lack details or indirect, long and extractive):  \n ------- \n {reference_answer} \n ------- \n
+    Assess the quality of model answer with respect to the Reference Answer, but do not penalize the model answer for adding details or give a direct answer to user question.
+    Approach your evaluation in step-by-step manner.
+    For evaluating first list out keys facts covered in the reference answer and check how many are covered by the model answer.
+    If the question or reference answer is about steps then check if the steps and their order in model answer match with reference answer.
+    Provide your response as JSON object with two keys: 'reasoning' and 'answer_quality'.
+testing_config:
+  name: lab-tuned-granite
+  endpoint_url: https://api.server.com/v1
+  model_name: <model-name>
+  model_type: vllm
+  api_key: <api-key>
+  rag: False
+  template: |
+    <|system|>
+    I am a Red Hat Instruct Model, an AI language model developed by Red Hat and IBM Research based on the granite-3.0-8b-base model.
+    My primary role is to serve as a chat assistant.
+    <|user|>
+    Answer the following question based on internal knowledge.
+    Question: {question}
+    Answer:
+    <|assistant|>
+rag_testing_config:
+  name: lab-tuned-granite-rag
+  endpoint_url: https://api.server.com/v1
+  model_name: <model-name>
+  model_type: vllm
+  api_key: <api-key>
+  rag: True
+  template: |
+    <|system|>
+    I am a Red Hat Instruct Model, an AI language model developed by Red Hat and IBM Research based on the granite-3.0-8b-base model.
+    My primary role is to serve as a chat assistant.
+    <|user|>
+    Context:
+    {context}
+    Answer the following question from the above context and internal memory.
+    Question: {question}
+    Answer:
+    <|assistant|>
+comparison_configs:
+  - name: granite-3.0-8b-instruct-rag
+    endpoint_url: https://api.server.com/v1
+    model_name: granite-3-8b-instruct
+    model_type: vllm
+    api_key: <api-key>
+    rag: True
+    template: |
+      <|start_of_role|>system<|end_of_role|>
+      I am Granite 3 8B Instruct, an AI language model.
+      My primary function is to be a chat assistant.
+      <|start_of_role|>user<|end_of_role|>
+      Context:
+      {context}
+      Answer the following question from the above context.
+      Question: {question}
+      Answer:
+      <|start_of_role|>assistant<|end_of_role|>
+  - name: gpt-4-rag
+    model_name: gpt-4
+    model_type: openai
+    api_key: <api-key>
+    rag: True
+    template: |
+      Context:
+      {context}
+      Answer the following question from the above context.
+      Question: {question}
+      Answer:
