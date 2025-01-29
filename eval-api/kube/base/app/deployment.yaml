@@ -1,4 +1,3 @@
----
 kind: Deployment
 apiVersion: apps/v1
 metadata:
@@ -30,7 +29,7 @@ spec:
               protocol: TCP
           envFrom:
             - secretRef:
-                name: aws-connection-llm-eval-app
+                name: llm-eval-app-config
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
@@ -47,52 +46,3 @@ spec:
       maxSurge: 25%
   revisionHistoryLimit: 10
   progressDeadlineSeconds: 600
-
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: llm-eval-app
-  labels:
-    app: llm-eval-app
-    app.kubernetes.io/component: llm-eval-app
-    app.kubernetes.io/instance: llm-eval-app
-    app.kubernetes.io/name: llm-eval-app
-    app.kubernetes.io/part-of: llm-eval-app
-    app.openshift.io/runtime: python
-    app.openshift.io/runtime-version: 3.11-ubi8
-spec:
-  type: ClusterIP
-  selector:
-    app: llm-eval-app
-    deployment: llm-eval-app
-  ports:
-    - name: 8080-tcp
-      protocol: TCP
-      port: 8080
-      targetPort: 8080
-
----
-kind: Route
-apiVersion: route.openshift.io/v1
-metadata:
-  name: llm-eval-app
-  labels:
-    app: llm-eval-app
-    app.kubernetes.io/component: llm-eval-app
-    app.kubernetes.io/instance: llm-eval-app
-    app.kubernetes.io/name: llm-eval-app
-    app.kubernetes.io/part-of: llm-eval-app
-    app.openshift.io/runtime: python
-    app.openshift.io/runtime-version: 3.11-ubi8
-spec:
-  to:
-    kind: Service
-    name: llm-eval-app
-    weight: 100
-  port:
-    targetPort: 8080-tcp
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
-  wildcardPolicy: None

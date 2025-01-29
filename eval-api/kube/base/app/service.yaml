@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: llm-eval-app
+  labels:
+    app: llm-eval-app
+    app.kubernetes.io/component: llm-eval-app
+    app.kubernetes.io/instance: llm-eval-app
+    app.kubernetes.io/name: llm-eval-app
+    app.kubernetes.io/part-of: llm-eval-app
+spec:
+  type: ClusterIP
+  selector:
+    app: llm-eval-app
+    deployment: llm-eval-app
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080

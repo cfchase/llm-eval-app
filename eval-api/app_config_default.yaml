@@ -1,6 +1,6 @@
 name: finetuned-eval
 judge:
-  endpoint_url: https://api.server.com/v1
+  endpoint_url: https://api.openai.com/v1
   model_name: gpt-4o
   model_type: openai
   api_key: <api-key>

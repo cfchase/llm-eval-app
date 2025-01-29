@@ -13,14 +13,6 @@ run:
 	podman run --platform linux/amd64 -ePORT=8080 -p8080:8080 ${IMAGE_TAG}
 
 run-local:
-	BASE_STORAGE_PATH=./tmp uvicorn app.main:app --host 0.0.0.0 --port 8080 --loop asyncio --reload
-
-run-local-s3:
-	AWS_S3_ENDPOINT=url \
-	AWS_ACCESS_KEY_ID=minio \
-	AWS_SECRET_ACCESS_KEY=password \
-	AWS_DEFAULT_REGION=us-east-1 \
-	AWS_S3_BUCKET=storage-bucket \
 	uvicorn app.main:app --host 0.0.0.0 --port 8080 --loop asyncio --reload
 
 test-local:

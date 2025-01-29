@@ -1,0 +1,12 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: llm-eval-app
+spec:
+  template:
+    spec:
+      containers:
+        - name: llm-eval-app
+          envFrom:
+            - secretRef:
+                name: aws-connection-aws-s3
