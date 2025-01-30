@@ -9,6 +9,7 @@ logging.basicConfig(level=LOG_LEVEL)
 logger = logging.getLogger(__name__)
 
 APP_CONFIG_PATH = os.environ.get("APP_CONFIG_PATH")
+APP_API_KEY = os.environ.get("API_KEY")
 
 
 def load_yaml_config(filepath):

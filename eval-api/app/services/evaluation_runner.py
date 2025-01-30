@@ -61,11 +61,7 @@ class EvaluationRunner:
 
     def write_results(self):
         logger.info("write_results")
-        # logger.info("run", self.run.model_dump())
-        # logger.info("evaluation", self.evaluation.model_dump())
-        storage.write_json(self.evaluation.model_dump(), f"{self.evaluation.id}/evaluation.json")
-        # storage.write_json(self.run.model_dump(), f"{self.evaluation.id}/openai_evaluation.json")
-
+        storage.write_json(self.evaluation.model_dump(exclude={"api_key"}), f"{self.evaluation.id}/evaluation.json")
 
 
     def evaluate(self):

@@ -1,14 +1,9 @@
-from app.utils.config import logger
+from app.utils.config import logger, APP_API_KEY
 
-from typing import Annotated
+from typing import Optional
 from fastapi import Header, HTTPException
 
 
-async def get_token_header():
-    logger.info("Root endpoint accessed")
-    return
-
-# async def get_token_header(bearer_token: Annotated[str, Header()]):
-#     logger.info(bearer_token)
-#     # if x_token != "fake-super-secret-token":
-#     #     raise HTTPException(status_code=400, detail="X-Token header invalid")
+async def get_token_header(api_key: Optional[str] = Header(None)):
+    if APP_API_KEY and api_key != APP_API_KEY:
+        raise HTTPException(status_code=400, detail="header api-key invalid")
